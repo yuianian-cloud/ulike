@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube 极速下载器</title>
-    <!-- 引入美化样式，保证界面不再是白底黑字 -->
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
         body { background-color: #0f172a; color: #ffffff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; font-family: sans-serif; }
-        .card-box { background-color: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; width: 100%; max-w: 500px; text-align: center; }
+        .card-box { background-color: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; width: 100%; max-width: 500px; text-align: center; }
         input { background-color: #020617 !important; border: 1px solid #475569 !important; color: #ffffff !important; padding: 12px !important; border-radius: 8px !important; margin-bottom: 15px; }
         input:focus { border-color: #ef4444 !important; box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25) !important; }
         .btn-mp4 { background-color: #dc3545; color: white; font-weight: bold; padding: 12px; border-radius: 8px; border: none; width: 48%; }
         .btn-mp3 { background-color: #ffc107; color: #020617; font-weight: bold; padding: 12px; border-radius: 8px; border: none; width: 48%; }
-        .btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -22,44 +20,41 @@
         <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: #ef4444;">YouTube Downloader</h1>
         <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">输入 YouTube 链接，快速解析 MP4 视频与 MP3 音频</p>
         
-        <!-- 输入框 -->
         <input type="text" id="videoUrl" class="form-control" placeholder="请粘贴 YouTube 视频链接...">
         
-        <!-- 按钮组 -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <button onclick="convert('mp4')" class="btn btn-mp4">转换 MP4 视频</button>
             <button onclick="convert('mp3')" class="btn btn-mp3">转换 MP3 音频</button>
         </div>
-
-        <!-- 结果展示区域 -->
-        <div id="resultBox" style="display: none; border-top: 1px solid #334155; padding-top: 20px; margin-top: 15px;">
-            <p style="color: #4ade80; font-weight: 600; margin-bottom: 10px;">🎉 解析成功！请点击下方按钮下载：</p>
-            <div id="downloadButtons"></div>
-        </div>
+        
+        <p style="font-size: 11px; color: #64748b; margin-top: 15px;">提示：点击上方按钮后将自动为您调起安全下载通道。</p>
     </div>
 
     <script>
         function convert(format) {
             var urlInput = document.getElementById('videoUrl').value.trim();
-            var resultBox = document.getElementById('resultBox');
-            var downloadButtons = document.getElementById('downloadButtons');
-
             if (!urlInput) {
                 alert('请先输入有效的 YouTube 链接！');
                 return;
             }
 
-            // 显示加载状态
-            resultBox.style.display = 'block';
-            downloadButtons.innerHTML = '<p style="color: #94a3b8; font-size: 14px;">正在向云端发起解析，请稍候...</p>';
-
-                        // 更换为 2026 全新稳定的迁移后接口地址
-            var cleanUrl = encodeURIComponent(urlInput);
-            var apiUrl = 'https://yuianian-cloud.savenow.to/ulike/' + cleanUrl + '&f=' + format;
+            // 提取视频 ID
+            var videoId = '';
+            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = urlInput.match(regExp);
             
-            // 用 iframe 加载全新按钮
-            downloadButtons.innerHTML = '<iframe src="' + apiUrl + '" style="width: 100%; height: 75px; border: 0; overflow: hidden;" scrolling="no"></iframe><p style="font-size: 12px; color: #64748b; margin-top: 8px;">提示：若上方按钮加载较慢，请保持页面开启并多等待几秒。</p>';
+            if (match && match[2].length == 11) {
+                videoId = match[2];
+            } else {
+                alert('链接格式不正确，请确保是正确的 YouTube 视频链接！');
+                return;
+            }
 
+            // 构建绝对稳定的外部直链网关，不再受跨域影响
+            var downloadUrl = 'https://yuianian-cloud.loader.to/ulike/' + videoId + '&f=' + format;
+            
+            // 在手机浏览器中新建一个标签页直接进行安全下载
+            window.open(downloadUrl, '_blank');
         }
     </script>
 </body>
