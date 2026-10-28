@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极速 YouTube 视频/音频下载器</title>
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-center items-center p-4">
+    <div class="w-full max-w-xl bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 text-center">
+        <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent">YouTube Downloader</h1>
+        <p class="text-slate-400 text-sm mb-6">输入 YouTube 链接，快速解析 MP4 视频与 MP3 音频</p>
+        <input type="text" id="videoUrl" placeholder="请粘贴 YouTube 视频链接..." class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700 focus:outline-none focus:border-red-500 text-white mb-4 placeholder-slate-500">
+        <div class="flex gap-4 mb-6">
+            <button onclick="convert('mp4')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition cursor-pointer">转换成 MP4 (视频)</button>
+            <button onclick="convert('mp3')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-6 rounded-xl transition cursor-pointer">转换成 MP3 (音频)</button>
+        </div>
+        <div id="resultBox" class="hidden border-t border-slate-700 pt-6 mt-4">
+            <p class="text-emerald-400 font-semibold mb-3">🎉 解析成功！请点击下方按钮下载：</p>
+            <div id="downloadButtons" class="flex flex-col gap-3"></div>
+        </div>
+    </div>
+    <p class="text-xs text-slate-600 mt-8">本工具仅供个人学习研究使用，请勿用于侵权用途。</p>
+    <script>
+        function convert(format) {
+            const urlInput = document.getElementById('videoUrl').value.trim();
+            const resultBox = document.getElementById('resultBox');
+            const downloadButtons = document.getElementById('downloadButtons');
+            if (!urlInput) { alert('请先输入有效的 YouTube 链接！'); return; }
+            let videoId = '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = urlInput.match(regExp);
+            if (match && match[2].length === 11) { videoId = match[2]; } else { alert('链接格式不正确，无法识别视频 ID！'); return; }
+            resultBox.classList.remove('hidden');
+            downloadButtons.innerHTML = `<p class="text-slate-400 animate-pulse text-sm">正在向云端发起解析，请稍候...</p>`;
+            const apiUrl = `https://loader.to{encodeURIComponent(urlInput)}&f=${format}`;
+            downloadButtons.innerHTML = `
+                <iframe src="${apiUrl}" class="w-full h-16 border-0 overflow-hidden" scrolling="no"></iframe>
+                <p class="text-xs text-slate-500 mt-2">提示：点击上方按钮即可完成下载。</p>
+            `;
+        }
+    </script>
+</body>
+</html>
